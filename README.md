@@ -157,11 +157,11 @@ a pass. This is a stricter, more defensible reading of "handle nulls
 carefully" than assuming equality when data is absent.
 
 ### Data freshness / scope
-- The backend pulls up to 250 coins per CoinGecko page (`per_page=250`,
-  `page=1`, sorted by market cap descending) — CoinGecko's free tier caps
-  `per_page` at 250. Given the filters (FDV < $100M, top-100-excluded via
-  the `preview_listing` mock), this range comfortably covers the segment
-  of the market the filters are targeting.
+- The backend pulls the first two CoinGecko pages (up to 500 coins total,
+  `per_page=250`, sorted by market cap descending) — CoinGecko's free tier
+  caps `per_page` at 250. This reaches beyond the top 250 so the filters
+  (`FDV < $100M`, top-100-excluded via the `preview_listing` mock) can return
+  matching projects from the next market-cap segment.
 - No API key is required or used; if you have a CoinGecko Demo/Pro API key,
   it can be added as a header in `fetch_coingecko_markets()` in `main.py` to
   raise the real rate limits.

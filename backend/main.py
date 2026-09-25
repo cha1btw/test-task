@@ -26,6 +26,8 @@ COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3"
 CACHE_TTL_SECONDS = 90  # within the recommended 60-120s window
 CACHE_MAXSIZE = 8
 REQUEST_TIMEOUT = 15.0
+COINGECKO_PAGES = 2
+COINGECKO_PER_PAGE = 250
 
 # Filter thresholds (business rules from the spec)
 MIN_MCAP = 0
@@ -113,27 +115,31 @@ async def fetch_coingecko_markets() -> tuple[list, bool]:
     params = {
         "vs_currency": "usd",
         "order": "market_cap_desc",
-        "per_page": 250,
-        "page": 1,
+        "per_page": COINGECKO_PER_PAGE,
         "sparkline": "false",
         "price_change_percentage": "24h",
     }
 
     try:
         async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT) as client:
-            resp = await client.get(f"{COINGECKO_BASE_URL}/coins/markets", params=params)
+            data = []
+            for page in range(1, COINGECKO_PAGES + 1):
+                resp = await client.get(
+                    f"{COINGECKO_BASE_URL}/coins/markets",
+                    params={**params, "page": page},
+                )
 
-        if resp.status_code == 429:
-            # Rate limited: serve stale cache if we have it, else error.
-            if _last_good_data is not None:
-                return _last_good_data, True
-            raise HTTPException(
-                status_code=503,
-                detail="CoinGecko rate limit hit and no cached data is available yet. Please retry shortly.",
-            )
+                if resp.status_code == 429:
+                    # Rate limited: serve stale cache if we have it, else error.
+                    if _last_good_data is not None:
+                        return _last_good_data, True
+                    raise HTTPException(
+                        status_code=503,
+                        detail="CoinGecko rate limit hit and no cached data is available yet. Please retry shortly.",
+                    )
 
-        resp.raise_for_status()
-        data = resp.json()
+                resp.raise_for_status()
+                data.extend(resp.json())
 
         _cache[_CACHE_KEY] = data
         _last_good_data = data
@@ -270,9 +276,9 @@ async def health() -> dict:
 @app.get("/api/projects", response_model=ProjectsResponse)
 async def get_projects(
     limit: int = Query(
-        default=250,
+        default=COINGECKO_PAGES * COINGECKO_PER_PAGE,
         ge=1,
-        le=250,
+        le=COINGECKO_PAGES * COINGECKO_PER_PAGE,
         description="Number of raw CoinGecko coins considered before filtering; the response may contain fewer projects",
     ),
 ):
