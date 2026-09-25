@@ -52,7 +52,7 @@ Run the (network-free) unit tests for the filter logic:
 
 ```bash
 pip install pytest
-pytest test_filters.py -v
+pytest -q
 ```
 
 ### Frontend
@@ -90,6 +90,8 @@ backend to be running at `http://localhost:8000` (see `src/api.ts`).
 - [x] Typed response models via Pydantic
 - [x] Unit tests for the filter logic (`test_filters.py`) that run without
       any network access
+- [x] API integration tests for `/api/projects` and `/api/health` with mocked
+      upstream data (`test_api.py`)
 
 **Frontend**
 - [x] Fetches exclusively from the local backend — no direct CoinGecko calls
