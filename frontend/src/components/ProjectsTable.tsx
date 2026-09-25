@@ -107,7 +107,7 @@ export default function ProjectsTable({ projects, sortField, sortDirection, onSo
                   (p.price_change_percentage_24h ?? 0) >= 0 ? 'text-emerald-600' : 'text-red-600'
                 }`}
               >
-                {p.price_change_percentage_24h?.toFixed(2) ?? '—'}%
+                {p.price_change_percentage_24h == null ? '—' : `${p.price_change_percentage_24h.toFixed(2)}%`}
               </td>
             </tr>
           ))}

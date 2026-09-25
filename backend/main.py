@@ -269,12 +269,18 @@ async def health() -> dict:
 
 @app.get("/api/projects", response_model=ProjectsResponse)
 async def get_projects(
-    limit: int = Query(default=250, ge=1, le=250, description="Max raw coins fetched from CoinGecko before filtering"),
+    limit: int = Query(
+        default=250,
+        ge=1,
+        le=250,
+        description="Number of raw CoinGecko coins considered before filtering; the response may contain fewer projects",
+    ),
 ):
     """
     Returns the list of cryptocurrency projects from CoinGecko after applying
     all filter criteria (market cap, preview_listing, supply equality, FDV,
-    24h volume, TVL). See README.md for details on mocked fields.
+    24h volume, TVL). The limit applies before filtering, so count may be
+    lower than the requested limit. See README.md for mocked fields.
     """
     raw_data, cached = await fetch_coingecko_markets()
 

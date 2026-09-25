@@ -4,7 +4,7 @@ A full-stack application that fetches cryptocurrency market data from
 CoinGecko, filters it against a set of business rules on the backend, and
 displays it in a searchable, filterable, sortable table on the frontend.
 
-- **Backend:** Python 3.10+ / FastAPI / httpx / cachetools
+- **Backend:** Python 3.9+ / FastAPI / httpx / cachetools
 - **Frontend:** React 18 / Vite / TypeScript / Tailwind CSS
 
 ```
