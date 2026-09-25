@@ -86,7 +86,7 @@ backend to be running at `http://localhost:8000` (see `src/api.ts`).
   - FDV < $100,000,000
   - 24h Volume > $50,000
   - TVL > $50,000 (mocked — see Assumptions)
-- [x] CORS configured for `http://localhost:5173`
+- [x] CORS configured for `http://localhost:5173` and `http://127.0.0.1:5173`
 - [x] Typed response models via Pydantic
 - [x] Unit tests for the filter logic (`test_filters.py`) that run without
       any network access
@@ -163,6 +163,14 @@ carefully" than assuming equality when data is absent.
 - No API key is required or used; if you have a CoinGecko Demo/Pro API key,
   it can be added as a header in `fetch_coingecko_markets()` in `main.py` to
   raise the real rate limits.
+
+### AI workflow
+
+AI coding assistants were used to scaffold the FastAPI and React structure,
+draft the filtering and UI logic, and review the implementation against the
+requirements. The code, assumptions around unavailable CoinGecko fields,
+tests, CORS behavior, and local runtime checks were reviewed and corrected
+manually.
 
 ### Out of scope (given the time limit)
 - No persistent database — caching is in-memory only and resets on server
